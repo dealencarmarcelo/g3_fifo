@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Checkbox, Button, InputNumber } from 'antd';
+import { Checkbox, InputNumber } from 'antd';
 import "antd/dist/antd.css";
 
 export default class Info extends Component {
@@ -33,11 +33,11 @@ export default class Info extends Component {
                         </div>
                         <div style={{ display: 'flex', flexDirection: 'row', margin: 'auto' }}>
                             <p>Tempo máximo de atendimento (em segundos):</p>
-                            <InputNumber style={{ height: 28, marginLeft: 10, marginTop: 0 }} disabled={this.props.active} onChange={this.props.setMaxAttendance} min={0} max={30} step={1} />
+                            <InputNumber style={{ height: 28, marginLeft: 10, marginTop: 0 }} disabled={this.props.active} onChange={this.props.setMaxAttendanceTiming} min={0} max={30} step={1} />
                         </div>
                         <div style={{ display: 'flex', flexDirection: 'row', margin: 'auto' }}>
                             <p>Número máximo de chegada:</p>
-                            <InputNumber style={{ height: 28, marginLeft: 10, marginTop: 0 }} min={0} max={10} step={1} />
+                            <InputNumber style={{ height: 28, marginLeft: 10, marginTop: 0 }} disabled={this.props.active} onChange={this.props.setMaxArrivalTiming} min={0} max={10} step={1} />
                         </div>
                     </div>
                 </div>

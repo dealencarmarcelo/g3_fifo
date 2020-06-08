@@ -36,3 +36,71 @@
     transform: rotate(360deg);
   }
 }
+
+.System-button {
+  margin: 5px;
+}
+
+.System-timing {
+  margin-top: 30px;
+  font-size: 16px;
+  text-align: center;
+}
+
+.System-components {
+  display: flex;
+  flex-direction: row;
+}
+
+.info {
+  height: auto; 
+  margin: auto; 
+  display: flex; 
+  flex-direction: column;
+}
+
+.info-checkbox {
+  display: flex; 
+  flex-direction: row; 
+  margin: auto;
+}
+
+.info-h2 {
+  margin-top: 30px;
+}
+
+.info-inputs-div {
+  margin: auto;
+}
+
+.info-input-group {
+  display: flex;
+  flex-direction: row;
+  margin: auto;
+}
+
+.info-input {
+  height: 28;
+  margin-left: 10;
+  margin-top: 0;
+}
+
+.info-metrics {
+  height: auto;
+  margin-top: 30;
+  align-items: start;
+  display: block;
+}
+
+.info-metric {
+  width: 500;
+  margin-top: 20;
+  align-items: start;
+  display: flex;
+  flex-direction: column;
+}
+
+.info-metric-p {
+  margin-left: 50; 
+  font-size: 16;
+}

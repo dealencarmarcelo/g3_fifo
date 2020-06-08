@@ -4,6 +4,7 @@ import moment from 'moment';
 import "antd/dist/antd.css";
 import Info from './Info';
 import Attendance from './Attendance';
+import '../App.css';
 
 const GATES = [
     { name: 'A', data: [], status: false },
@@ -43,7 +44,7 @@ export default class System extends Component {
             totalTiming: 0,
             totalArrival: 0,
             totalQueueTiming: 0,
-            ritmoMedioChegada: 0
+            maxArrival: 2
         }
     };
 
@@ -56,6 +57,7 @@ export default class System extends Component {
                     .second(counter++)
                     .format('HH : mm : ss'),
             });
+            this.verificarAtendimento();
         }, 1000);
     }
 
@@ -91,7 +93,7 @@ export default class System extends Component {
             totalTiming: 0,
             totalArrival: 0,
             totalQueueTiming: 0,
-            ritmoMedioChegada: 0
+            maxArrival: 2
         })
 
         GATES.map((v) => {
@@ -111,13 +113,14 @@ export default class System extends Component {
         this.clearQueue();
         this.queueInterval = setInterval(() => {
             
-            var { active, maxAttendance, totalQueueTiming, totalArrival } = this.state;
+            var { active, maxAttendance, totalQueueTiming, totalArrival, maxArrival } = this.state;
             if (active) {
 
                 this.validateGates()
-
+                
                 let { openedGates } = this.state;
-                let random = 2;
+                let random = Math.floor(Math.random() * maxArrival) + 1;
+                
                 let current = openedGates[0]
 
                 for (let i = 0; i < random; i++) {
@@ -135,25 +138,20 @@ export default class System extends Component {
                         queueTiming += v.x
                     })
 
-                    this.verificarAtendimento(counter);
-
                     let queue = queueTiming;
 
                     totalQueueTiming += queue
                     
                     GATES[current].data.push({ x: atendimento, y: time, queueTiming: queue })
                     
-                    this.verificarAtendimento(counter);
-
                     totalArrival += 1
 
                     this.setState({
                         totalQueueTiming: totalQueueTiming,
                         totalArrival: totalArrival
                     })
-
-                    this.verificarAtendimento(counter);
                 }
+                
                 this.setMetrics();
             }
         }, arrivalTiming * 1000)
@@ -218,9 +216,15 @@ export default class System extends Component {
         })
     }
 
-    setMaxAttendance = (value) => {
+    setMaxAttendanceTiming = (value) => {
         this.setState({
             maxAttendance: value
+        })
+    }
+
+    setMaxArrivalTiming = (value) => {
+        this.setState({
+            maxArrival: value
         })
     }
 
@@ -228,18 +232,18 @@ export default class System extends Component {
         let { totalClients, totalTiming, totalQueueTiming, totalArrival } = this.state;
         
         if (totalClients > 0) {
-            let avg = (totalTiming / totalClients)
+            let average = (totalTiming / totalClients)
             
             this.setState({
-                atendimentoMedio: avg,
+                atendimentoMedio: average,
             })
         }
 
-        if (totalClients > 0) {
-            let avg2 = (totalQueueTiming / totalClients)
+        if (totalArrival > 0) {
+            let queue = (totalQueueTiming / totalClients)
             
             this.setState({
-                queueTiming: avg2
+                queueTiming: queue
             })
         }
     }
@@ -250,25 +254,26 @@ export default class System extends Component {
 
         return (
             <div>
-                { !active ? <Button style={{ margin: 5 }} onClick={() => this.startProcess()} type="primary">
+                { !active ? <Button className="System-button" onClick={() => this.startProcess()} type="primary">
                             Iniciar Atendimento
                         </Button> :
-                        <Button style={{ margin: 5 }} onClick={() => this.pauseProcess()} type="primary" danger>
+                        <Button className="System-button" onClick={() => this.pauseProcess()} type="primary" danger>
                             Pausar Atendimento
                         </Button>
                 }
-                <Button style={{ margin: 5 }} onClick={this.finishProcess} type="primary">
+                <Button className="System-button" onClick={this.finishProcess} type="primary">
                     Finalizar Atendimento
                 </Button>
-                <div style={{ marginTop: 30 }}>
-                    <span style={{ textAlign: 'left' }}>Tempo de atendimento: {this.state.time}</span>
+                <div className="System-timing">
+                    <span>Tempo de atendimento: {this.state.time}</span>
                 </div>
-                <div style={{ display: 'flex', flexDirection: 'row' }}>
+                <div className="System-components">
                     <Info gates={GATES} 
                         atendimentoMedio={this.state.atendimentoMedio} 
                         queueTiming={this.state.queueTiming} 
                         setArraivalTiming={this.setArraivalTiming}
-                        setMaxAttendance={this.setMaxAttendance}
+                        setMaxAttendanceTiming={this.setMaxAttendanceTiming}
+                        setMaxArrival={this.setMaxArrivalTiming}
                         totalClients={this.totalClients}
                         active={active}
                     >

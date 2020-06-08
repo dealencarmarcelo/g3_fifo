@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import { UpCircleFilled, CarFilled } from '@ant-design/icons';
 import { Divider, Tooltip } from 'antd';
-import moment from 'moment';
 import "antd/dist/antd.css";
 
 export default class Attendance extends Component {
@@ -23,7 +22,7 @@ export default class Attendance extends Component {
                                     <div>
                                         <p style={{ fontSize: 20 }}>{v.name}</p>
                                         <UpCircleFilled style={{ fontSize: 35, color: (v.status ? 'green' : 'red') }}/>
-                                        <p style={{ marginTop: 10 }}>Clientes: {v.data.length}</p>
+                                        <p style={{ marginTop: 10 }}>Na fila: {v.data.length}</p>
                                     </div>
                                     <div style={{ marginTop: 40 }}>
                                         {v.data.map((v, i) => {
