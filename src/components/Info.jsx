@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { Checkbox, InputNumber } from 'antd';
 import "antd/dist/antd.css";
+import '../App.css';
 
 export default class Info extends Component {
 
@@ -15,10 +16,10 @@ export default class Info extends Component {
     render() {
         return (
             <div>
-                <div style={{ height: 'auto', margin: 'auto', display: 'flex', flexDirection: 'column' }}>
+                <div className="info">
                     <h2>Atendentes</h2>
                     <p>Defina quais atendentes ficarão disponíveis:</p>
-                    <div style={{ display: 'flex', flexDirection: 'row', margin: 'auto' }}>
+                    <div className="info-checkbox">
                         {this.props.gates.map((v, i) => {
                             return (
                                 <Checkbox onChange={() => { this.changeGate(i) }} key={i}><strong>{v.name}</strong></Checkbox>
@@ -27,26 +28,26 @@ export default class Info extends Component {
                     </div>
                     <h2 style={{ marginTop: 30 }}>Configurações</h2>
                     <div style={{ margin: 'auto' }}>
-                        <div style={{ display: 'flex', flexDirection: 'row', margin: 'auto' }}>
+                        <div className="info-checkbox">
                             <p>Intervalo de chegada (em segundos):</p>
-                            <InputNumber style={{ height: 28, marginLeft: 10, marginTop: 0 }} disabled={this.props.active} onChange={this.props.setArraivalTiming} min={0} max={20} step={0.1} />
+                            <InputNumber className="info-input" disabled={this.props.active} onChange={this.props.setArraivalTiming} min={0} max={20} step={0.1} />
                         </div>
-                        <div style={{ display: 'flex', flexDirection: 'row', margin: 'auto' }}>
+                        <div className="info-checkbox">
                             <p>Tempo máximo de atendimento (em segundos):</p>
-                            <InputNumber style={{ height: 28, marginLeft: 10, marginTop: 0 }} disabled={this.props.active} onChange={this.props.setMaxAttendanceTiming} min={0} max={30} step={1} />
+                            <InputNumber className="info-input" disabled={this.props.active} onChange={this.props.setMaxAttendanceTiming} min={0} max={30} step={1} />
                         </div>
-                        <div style={{ display: 'flex', flexDirection: 'row', margin: 'auto' }}>
+                        <div className="info-checkbox">
                             <p>Número máximo de chegada:</p>
-                            <InputNumber style={{ height: 28, marginLeft: 10, marginTop: 0 }} disabled={this.props.active} onChange={this.props.setMaxArrivalTiming} min={0} max={10} step={1} />
+                            <InputNumber className="info-input" disabled={this.props.active} onChange={this.props.setMaxArrivalTiming} min={0} max={10} step={1} />
                         </div>
                     </div>
                 </div>
-                <div style={{ height: 'auto', marginTop: 30, alignItems: 'start', display: 'block' }}>
+                <div className="info-metrics">
                     <h2>Métricas</h2>
-                    <div style={{ width: 500, marginTop: 20, alignItems: 'start', display: 'flex', flexDirection: 'column' }}>
-                        <p style={{ marginLeft: 50, fontSize: 16 }}>Tempo médio de atendimento: {(this.props.atendimentoMedio / 60).toFixed(1)} minutos</p>
-                        <p style={{ marginLeft: 50, fontSize: 16 }}>Tempo médio na fila: {(this.props.queueTiming / 60).toFixed(1)} minutos</p>
-                        <p style={{ marginLeft: 50, fontSize: 16 }}>Tempo médio no sistema: {((this.props.queueTiming + this.props.atendimentoMedio) / 60).toFixed(1)} minutos</p>
+                    <div className="info-metric">
+                        <p className="Info-metric-p">Tempo médio de atendimento: {(this.props.atendimentoMedio / 60).toFixed(1)} minutos</p>
+                        <p className="Info-metric-p">Tempo médio na fila: {(this.props.queueTiming / 60).toFixed(1)} minutos</p>
+                        <p className="Info-metric-p">Tempo médio no sistema: {((this.props.queueTiming + this.props.atendimentoMedio) / 60).toFixed(1)} minutos</p>
                     </div>
                 </div>
             </div>

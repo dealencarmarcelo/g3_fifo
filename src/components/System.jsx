@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Checkbox, Button } from 'antd';
+import { Button } from 'antd';
 import moment from 'moment';
 import "antd/dist/antd.css";
 import Info from './Info';
@@ -7,27 +7,22 @@ import Attendance from './Attendance';
 import '../App.css';
 
 const GATES = [
-    { name: 'A', data: [], status: false },
-    { name: 'B', data: [], status: false },
-    { name: 'C', data: [], status: false },
-    { name: 'D', data: [], status: false },
-    { name: 'E', data: [], status: false },
-    { name: 'F', data: [], status: false }
+    { name: 'A', queue: [], status: false },
+    { name: 'B', queue: [], status: false },
+    { name: 'C', queue: [], status: false },
+    { name: 'D', queue: [], status: false },
+    // { name: 'E', data: [], status: false },
+    // { name: 'F', data: [], status: false }
 ]
-const MAX_RANDOM = 20;
-const MAX_CHEGADA = 2;
-
 var counter = 1;
-// let queueInterval = null;
-
 export default class System extends Component {
 
     constructor(props) {
         super(props);
-        this.state = this._initialState();
+        this.state = this.initialState();
     }
 
-    _initialState = () => {
+    initialState = () => {
         return {
             time: moment()
                 .hour(0)
@@ -38,7 +33,7 @@ export default class System extends Component {
             openedGates: [],
             atendimentoMedio: 0,
             queueTiming: 0,
-            arrivalTiming: 1,
+            arrivalTiming: 5,
             maxAttendance: 20,
             totalClients: 0,
             totalTiming: 0,
@@ -47,19 +42,6 @@ export default class System extends Component {
             maxArrival: 2
         }
     };
-
-    startTimer = () => {
-        this.interval = setInterval(() => {
-            this.setState({
-                time: moment()
-                    .hour(0)
-                    .minute(0)
-                    .second(counter++)
-                    .format('HH : mm : ss'),
-            });
-            this.verificarAtendimento();
-        }, 1000);
-    }
 
     async startProcess() {
         await this.startGates();
@@ -72,34 +54,19 @@ export default class System extends Component {
         }
 
         await this.setState({ active: true });
-        this.startTimer();
+        
+        this.interval = setInterval(() => {
+            this.setState({
+                time: moment()
+                    .hour(0)
+                    .minute(0)
+                    .second(counter++)
+                    .format('HH : mm : ss'),
+            });
+            this.verificarAtendimento();
+        }, 1000);
+
         this.manageQueue();
-    }
-
-    finishProcess = () => {
-        this.setState({
-            time: moment()
-                .hour(0)
-                .minute(0)
-                .second(0)
-                .format('HH : mm : ss'),
-            active: false,
-            openedGates: [],
-            atendimentoMedio: 0,
-            queueTiming: 0,
-            arrivalTiming: 1,
-            maxAttendance: 20,
-            totalClients: 0,
-            totalTiming: 0,
-            totalArrival: 0,
-            totalQueueTiming: 0,
-            maxArrival: 2
-        })
-
-        GATES.map((v) => {
-            v.data = [];
-            v.status = false;
-        })
     }
 
     async pauseProcess() {
@@ -108,54 +75,15 @@ export default class System extends Component {
         clearInterval(this.interval);
     }
 
-    manageQueue = () => {
-        var { arrivalTiming } = this.state;
-        this.clearQueue();
-        this.queueInterval = setInterval(() => {
-            
-            var { active, maxAttendance, totalQueueTiming, totalArrival, maxArrival } = this.state;
-            if (active) {
+    finishProcess = () => {
+        this.state = this.initialState();
 
-                this.validateGates()
-                
-                let { openedGates } = this.state;
-                let random = Math.floor(Math.random() * maxArrival) + 1;
-                
-                let current = openedGates[0]
-
-                for (let i = 0; i < random; i++) {
-                    openedGates.map((v) => {
-                        if (GATES[v].data.length < GATES[current].data.length) {
-                            current = v;
-                        }
-                    })
-
-                    let atendimento = Math.floor(Math.random() * maxAttendance);
-                    let time = counter + atendimento
-                    let queueTiming = 0
-
-                    GATES[current].data.map((v) => {
-                        queueTiming += v.x
-                    })
-
-                    let queue = queueTiming;
-
-                    totalQueueTiming += queue
-                    
-                    GATES[current].data.push({ x: atendimento, y: time, queueTiming: queue })
-                    
-                    totalArrival += 1
-
-                    this.setState({
-                        totalQueueTiming: totalQueueTiming,
-                        totalArrival: totalArrival
-                    })
-                }
-                
-                this.setMetrics();
-            }
-        }, arrivalTiming * 1000)
+        GATES.map((v) => {
+            v.queue = [];
+            v.status = false;
+        })
     }
+
 
     startGates = () => {
         let indexes = []
@@ -183,14 +111,65 @@ export default class System extends Component {
         })
     }
 
+    manageQueue = () => {
+        var { arrivalTiming } = this.state;
+
+        this.clearQueue();
+
+        this.queueInterval = setInterval(() => {
+            
+            var { active, maxAttendance, totalQueueTiming, totalArrival, maxArrival } = this.state;
+            if (active) {
+
+                this.validateGates()
+                
+                let { openedGates } = this.state;
+                let random = Math.floor(Math.random() * maxArrival) + 1;
+                
+                let current = openedGates[0]
+                
+                for (let i = 0; i < random; i++) {
+                    openedGates.map((v) => {
+                        if (GATES[v].queue.length < GATES[current].queue.length) {
+                            current = v;
+                        }
+                    })
+
+                    let atendimento = Math.floor(Math.random() * maxAttendance);
+                    let time = counter + atendimento
+                    let queueTiming = 0
+
+                    GATES[current].queue.map((v) => {
+                        queueTiming += v.x
+                    })
+
+                    let queue = queueTiming;
+
+                    totalQueueTiming += queue
+                    
+                    GATES[current].queue.push({ x: atendimento, y: time, queueTiming: queue })
+                    
+                    totalArrival += 1
+
+                    this.setState({
+                        totalQueueTiming: totalQueueTiming,
+                        totalArrival: totalArrival
+                    })
+                }
+                
+                this.setMetrics();
+            }
+        }, arrivalTiming * 1000)
+    }
+
     verificarAtendimento = () => {
         let { totalClients, totalTiming } = this.state;
 
         GATES.map((v) => {
-            if (v.data[0] && v.data[0].y <= counter) {
+            if (v.queue[0] && v.queue[0].y <= counter) {
                 totalClients += 1
-                totalTiming += v.data[0].x
-                v.data.shift()
+                totalTiming += v.queue[0].x
+                v.queue.shift()
                 this.setState({
                     totalClients: totalClients,
                     totalTiming: totalTiming
@@ -203,8 +182,8 @@ export default class System extends Component {
     clearQueue = () => {
         this.queueClearInterval = setInterval(() => {
             GATES.map((v) => {
-                if (v.data[0] && v.data[0].y < counter) {
-                    v.data.shift()
+                if (v.queue[0] && v.queue[0].y < counter) {
+                    v.queue.shift()
                 }
             })
         }, 1000)
@@ -233,7 +212,6 @@ export default class System extends Component {
         
         if (totalClients > 0) {
             let average = (totalTiming / totalClients)
-            
             this.setState({
                 atendimentoMedio: average,
             })
@@ -241,7 +219,6 @@ export default class System extends Component {
 
         if (totalArrival > 0) {
             let queue = (totalQueueTiming / totalClients)
-            
             this.setState({
                 queueTiming: queue
             })
@@ -250,25 +227,29 @@ export default class System extends Component {
 
     render() {
 
-        let { active } = this.state;
+        let { active, time, totalClients } = this.state;
 
         return (
             <div>
-                { !active ? <Button className="System-button" onClick={() => this.startProcess()} type="primary">
+                { !active ? 
+                        <Button className="System-button" onClick={() => this.startProcess()} type="primary">
                             Iniciar Atendimento
-                        </Button> :
-                        <Button className="System-button" onClick={() => this.pauseProcess()} type="primary" danger>
+                        </Button> 
+                        :
+                        <Button className="System-button" onClick={() => this.pauseProcess()} type="primary" alert>
                             Pausar Atendimento
                         </Button>
                 }
-                <Button className="System-button" onClick={this.finishProcess} type="primary">
+                <Button className="System-button" onClick={this.finishProcess} type="primary" danger>
                     Finalizar Atendimento
                 </Button>
                 <div className="System-timing">
-                    <span>Tempo de atendimento: {this.state.time}</span>
+                    <p>{time}</p>
+                    <p>Total de clientes atendidos: {totalClients}</p>
                 </div>
                 <div className="System-components">
-                    <Info gates={GATES} 
+                    <Info   
+                        gates={GATES} 
                         atendimentoMedio={this.state.atendimentoMedio} 
                         queueTiming={this.state.queueTiming} 
                         setArraivalTiming={this.setArraivalTiming}

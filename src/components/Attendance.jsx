@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
 import { UpCircleFilled, CarFilled } from '@ant-design/icons';
-import { Divider, Tooltip } from 'antd';
+import { Tooltip } from 'antd';
 import "antd/dist/antd.css";
+import '../App.css';
 
 export default class Attendance extends Component {
 
@@ -13,32 +14,33 @@ export default class Attendance extends Component {
 
     render() {
         return (
-            <div style={{ width: '80%', height: 'auto', marginLeft: 'auto', marginRight: 'auto', display: 'inline-block' }}>
+            <div className="attendance">
                 <div style={{ marginTop: 40 }}>
                     <div style={{ display: 'flex' }}>
                         {this.props.gates.map((v, i) => {
                             return (
-                                <div key={i} style={{ marginLeft: 'auto', marginRight: 'auto' }}>
+                                <div className="gate" key={i}>
                                     <div>
-                                        <p style={{ fontSize: 20 }}>{v.name}</p>
-                                        <UpCircleFilled style={{ fontSize: 35, color: (v.status ? 'green' : 'red') }}/>
-                                        <p style={{ marginTop: 10 }}>Na fila: {v.data.length}</p>
+                                        <p style={{ fontSize: 20 }}>Portão {v.name}</p>
+                                        <UpCircleFilled style={{ fontSize: 35, color: (v.status ? '#00B045' : '#F40000') }}/>
                                     </div>
                                     <div style={{ marginTop: 40 }}>
-                                        {v.data.map((v, i) => {
+                                        {v.queue.map((v, i) => {
                                             return (
                                                 <div>
-                                                    {i == 0 ? <div>
+                                                    {i == 0 ? 
+                                                            <div>
+                                                                <p>Em atendimento</p>
                                                                 <p>{v.x}s</p>
-                                                                <Tooltip placement="top" title={"Atendimento: " + v.x + " - Fila: " + v.queueTiming}>
-                                                                    <p><CarFilled style={{ fontSize: 20, color: 'green' }} /></p>
+                                                                <Tooltip placement="top" title={"Atendimento: " + v.x + " - Máx. Fila: " + v.queueTiming}>
+                                                                <p><CarFilled className="attendance-client"/></p>
                                                                 </Tooltip>
-                                                                <Divider style={{ border: 2, borderStyle: 'solid' }} />
-                                                            </div> : 
+                                                            </div> 
+                                                            : 
                                                             <div>
                                                                 <p>{v.x}s</p>
                                                                 <Tooltip placement="top" title={"Atendimento: " + v.x + " - Fila: " + v.queueTiming}>
-                                                                    <p><CarFilled style={{ fontSize: 20, color: 'black' }} /></p>
+                                                                    <p><CarFilled className="queue-client"/></p>
                                                                 </Tooltip>
                                                             </div>
                                                     }
