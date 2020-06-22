@@ -11,8 +11,6 @@ const GATES = [
     { name: 'B', queue: [], status: false },
     { name: 'C', queue: [], status: false },
     { name: 'D', queue: [], status: false },
-    // { name: 'E', data: [], status: false },
-    // { name: 'F', data: [], status: false }
 ]
 var counter = 1;
 export default class System extends Component {
@@ -33,13 +31,13 @@ export default class System extends Component {
             openedGates: [],
             atendimentoMedio: 0,
             queueTiming: 0,
-            arrivalTiming: 5,
+            arrivalTiming: 3,
             maxAttendance: 20,
             totalClients: 0,
             totalTiming: 0,
             totalArrival: 0,
             totalQueueTiming: 0,
-            maxArrival: 2
+            maxArrival: 3
         }
     };
 
@@ -49,7 +47,7 @@ export default class System extends Component {
         let { openedGates } = this.state;
 
         if (openedGates.length == 0) {
-            alert("Não é possível iniciar o atendimento sem a abertura de pelo menos UM atendente.")
+            alert("Não é possível iniciar o atendimento sem a abertura de pelo menos UM portão de atendimento.")
             return false;
         }
 
